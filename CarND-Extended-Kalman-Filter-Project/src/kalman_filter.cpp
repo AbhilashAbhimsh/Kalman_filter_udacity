@@ -29,15 +29,17 @@ void KalmanFilter::Predict() {
   /**
    * TODO: predict the state
    */
-//   std::cout << "KalmanFilter::Predict() Entered" << std::endl;
+  std::cout << "KalmanFilter::Predict() Entered" << std::endl;
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
+  std::cout << "KalmanFilter::Predict() P" << P_ <<  std::endl;
   P_ = (F_ * P_ * Ft) + Q_;
+  std::cout << "KalmanFilter::Predict() P After" << P_ <<  std::endl;
 //   std::cout << "P_\n" << P_ << std::endl;
 //   std::cout << "Q_\n" << Q_ << std::endl;
 //   std::cout << "x_\n" << x_ << std::endl;
 //   std::cout << "F_\n" << F_ <<std::endl;
-//   std::cout << "KalmanFilter::Predict() Exited" << std::endl;
+  std::cout << "KalmanFilter::Predict() Exited" << std::endl;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
@@ -45,20 +47,25 @@ void KalmanFilter::Update(const VectorXd &z) {
    * TODO: update the state by using Kalman Filter equations
    */
   
-//   std::cout << "KalmanFilter::update() Entered" << std::endl;
-//   std::cout << z << H_ << std::endl << x_ <<std::endl;
-//   std::cout << H_ << std::endl << std::endl << x_ <<std::endl;
+  std::cout << "KalmanFilter::update() Entered" << std::endl;
+  std::cout << "z: \n" << z << std::endl;
+  std::cout << "H: \n" << H_ << std::endl;
+  std::cout << "x_: \n"   << x_ <<std::endl;
   
   VectorXd y = z - (H_ * x_);
-  MatrixXd S = (H_ * P_ * H_.transpose()) + R_;
-//   std::cout << "KalmanFilter::update() S: \n" << S << std::endl;
-  MatrixXd K = P_ * H_.transpose() * S.inverse();
+  std::cout << "y_: \n"   << y <<std::endl;
+  std::cout << "P_: \n"   << P_ <<std::endl;
+  std::cout << "R_: \n"   << R_ <<std::endl;
   
+  MatrixXd S = (H_ * P_ * H_.transpose()) + R_;
+  std::cout << "KalmanFilter::update() S: \n" << S << std::endl;
+  MatrixXd K = P_ * H_.transpose() * S.inverse();
+  std::cout << "KalmanFilter::update() S: \n" << S << std::endl;
   x_ = x_ + (K*y);
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
-  P_ = (I - K*H_)*P_;
-//   std::cout << "KalmanFilter::update() Exited\n";
+  P_ = (I - (K*H_))*P_;
+  std::cout << "KalmanFilter::update() Exited\n";
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -66,7 +73,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    * TODO: update the state by using Extended Kalman Filter equations
    */
 //   std::cout << "\n\nKalmanFilter::updateEKF() Entered" << std::endl;
-  
+   std::cout << "KalmanFilter::updateEKF() Entered" << std::endl;
   float px = x_(0);
   float py = x_(1);
   float vx = x_(2);
@@ -79,8 +86,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   
   VectorXd H_x(3), y(3);
   H_x << rho, theta, rho_prime;
-//   std::cout << "H_x\n" << H_x << std::endl;
-//   std::cout << "z\n" << z << std::endl;
   y = z - H_x;
 //   std::cout << "y\n" << y << std::endl;
   MatrixXd S = (H_*P_*H_.transpose()) + R_;
@@ -94,5 +99,5 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K*H_) * P_;
-//    std::cout << "KalmanFilter::updateEKF() Exited\n\n" << std::endl;
+   std::cout << "KalmanFilter::updateEKF() Exited\n\n" << std::endl;
 }

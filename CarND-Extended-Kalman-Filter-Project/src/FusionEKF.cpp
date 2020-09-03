@@ -63,8 +63,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
     ekf_.P_ = MatrixXd(4,4);
-    ekf_.P_ << 1, 0, 0, 0,
-               0, 1, 0, 0,
+    ekf_.P_ << 1.0, 0, 0, 0,
+               0, 1.0, 0, 0,
                0, 0, 1000, 0,
                0, 0, 0, 1000;
    
@@ -82,7 +82,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     }
 
     // done initializing, no need to predict or update
+    previous_timestamp_ = measurement_pack.timestamp_;
     is_initialized_ = true;
+    std::cout << "Initialization P_" << ekf_.P_ << std::endl;
+    std::cout << "Initialization Successfull" << std::endl;
     return;
   }
 
@@ -98,6 +101,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    */
   ekf_.F_ = MatrixXd(4,4);
   double delta_time = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0 ;
+  std::cout << "delta_time" << delta_time << std::endl;
   previous_timestamp_ = measurement_pack.timestamp_;
   ekf_.F_ << 1, 0, delta_time, 0,
              0, 1, 0, delta_time,
